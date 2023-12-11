@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { ContactItems, Contact, Button } from './ContactList.styled'
+import { ContactItems, Contact, Button, Text } from './ContactList.styled'
 import { selectFilteredContacts, selectError, selectIsLoading } from 'redux/selectors';
 import { fetchContacts, deleteContact } from 'redux/fetchData';
 import { useEffect } from 'react';
@@ -20,7 +20,7 @@ export default function ContactList() {
       {isLoading && !error ? (
         <Loader />
       ) : filteredContacts.length === 0 && !error ? (
-          <p>The Phonebook is empty. Add your first contact.</p>
+          <Text>There no matches in phonebook.</Text>
         ) : (
           filteredContacts.map(({ id, name, number }) => (
         <ContactItem key={id} contact={{ id, name, number }}/>
