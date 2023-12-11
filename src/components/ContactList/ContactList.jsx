@@ -1,22 +1,31 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { ContactItems, Contact, Button } from './ContactList.styled'
-import { deleteContact } from 'redux/contactsSlice';
-import { getContacts, getFilter } from 'redux/selectors';
+import { selectFilteredContacts, selectError, selectIsLoading } from 'redux/selectors';
+import { fetchContacts, deleteContact } from 'redux/fetchData';
+import { useEffect } from 'react';
+import { Loader } from 'components/Loader/Loader';
 
-const getFilteredContacts = (contacts, filter) => {
-  const normalizedFilter = filter.toLowerCase();
-  return contacts.filter(contact => contact.name.toLowerCase().includes(normalizedFilter));
-};
+export default function ContactList() {
+  const filteredContacts = useSelector(selectFilteredContacts);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
 
-export function ContactList() {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-  const filteredContacts = getFilteredContacts(contacts, filter);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
     <ul>
-      {filteredContacts.map(({ id, name, number }) => (
+      {isLoading && !error ? (
+        <Loader />
+      ) : filteredContacts.length === 0 && !error ? (
+          <p>The Phonebook is empty. Add your first contact.</p>
+        ) : (
+          filteredContacts.map(({ id, name, number }) => (
         <ContactItem key={id} contact={{ id, name, number }}/>
-      ))}
+          ))
+      )}
     </ul>
   );
 }
